@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Painel Comercial</title>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+  --bg:#0f1117;
+  --surface:#181c27;
+  --card:#1e2336;
+  --border:#2a3050;
+  --accent:#e63946;
+  --accent2:#457b9d;
+  --green:#2ec4b6;
+  --gold:#f4a261;
+  --text:#e8ecf4;
+  --muted:#7f8aa3;
+  --neg:#ff5a5f;
+  --pos:#2ec4b6;
+  --font:'DM Sans',sans-serif;
+  --mono:'DM Mono',monospace;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font);
+  font-size:13px;
+}
+
+/* HEADER */
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:16px 24px;
+  border-bottom:1px solid var(--border);
+  background:var(--surface);
+  gap:20px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.brand-logo{
+  width:48px;
+  height:48px;
+  border-radius:10px;
+  background:var(--accent);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  font-size:22px;
+}
+
+.brand h1{
+  font-size:16px;
+}
+
+.brand h2{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:3px;
+  font-weight:400;
+}
+
+/* KPI */
+
+.kpis{
+  display:flex;
+  gap:10px;
+}
+
+.kpi{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:10px 16px;
+  min-width:160px;
+}
+
+.kpi small{
+  color:var(--muted);
+  text-transform:uppercase;
+  font-size:10px;
+  letter-spacing:.08em;
+}
+
+.kpi h3{
+  margin-top:5px;
+  font-size:20px;
+  font-family:var(--mono);
+}
+
+/* FILTROS */
+
+.filters{
+  padding:14px 24px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.filters label{
+  font-size:10px;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-weight:700;
+}
+
+select{
+  background:var(--card);
+  border:1px solid var(--border);
+  color:var(--text);
+  border-radius:6px;
+  padding:8px 10px;
+  min-width:150px;
+  outline:none;
+}
+
+button{
+  background:var(--accent);
+  border:none;
+  color:#fff;
+  padding:9px 18px;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:700;
+}
+
+button:hover{
+  opacity:.9;
+}
+
+.toggle{
+  margin-left:auto;
+  display:flex;
+  border:1px solid var(--border);
+  border-radius:6px;
+  overflow:hidden;
+}
+
+.toggle button{
+  border-radius:0;
+  background:var(--card);
+  color:var(--muted);
+}
+
+.toggle button.active{
+  background:var(--accent2);
+  color:#fff;
+}
+
+/* TABLE */
+
+.table-wrap{
+  padding:20px 24px;
+  overflow:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:var(--surface);
+  border:1px solid var(--border);
+}
+
+thead tr:first-child th{
+  background:var(--card);
+  color:var(--muted);
+  padding:12px;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+
+thead tr:nth-child(2) th{
+  padding:8px 12px;
+  border-bottom:2px solid var(--border);
+  font-size:10px;
+}
+
+th,td{
+  white-space:nowrap;
+}
+
+td{
+  padding:10px 12px;
+  border-bottom:1px solid var(--border);
+  text-align:right;
+  font-family:var(--mono);
+}
+
+td:first-child{
+  text-align:left;
+  font-family:var(--font);
+}
+
+tbody tr:hover{
+  background:rgba(255,255,255,.03);
+}
+
+.subtotal{
+  background:rgba(255,255,255,.04);
+  font-weight:700;
+}
+
+.total{
+  background:var(--card);
+  font-weight:700;
+}
+
+.neg{
+  color:var(--neg)!important;
+}
+
+.pos{
+  color:var(--pos)!important;
+}
+
+.loading{
+  text-align:center!important;
+  padding:50px!important;
+  color:var(--muted);
+}
+
+.status{
+  padding:10px 24px;
+  color:var(--muted);
+  border-top:1px solid var(--border);
+}
+
+.sep{
+  border-left:2px solid var(--border);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+  <div class="brand">
+    <div class="brand-logo">CV</div>
+
+    <div>
+      <h1>Companhia Alimentícia do Vale</h1>
+      <h2>Ganho por SKU · Mercado Interno</h2>
+    </div>
+  </div>
+
+  <div class="kpis">
+
+    <div class="kpi">
+      <small>Ganho por Preço</small>
+      <h3 id="kpi-preco">-</h3>
+    </div>
+
+    <div class="kpi">
+      <small>Ganho por Volume</small>
+      <h3 id="kpi-volume">-</h3>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="filters">
+
+  <label>Vendedor</label>
+  <select id="sel-vendedor">
+    <option value="">Todos</option>
+  </select>
+
+  <label>Gerente</label>
+  <select id="sel-gerente">
+    <option value="">Todos</option>
+  </select>
+
+  <label>UF</label>
+  <select id="sel-uf">
+    <option value="">Todas</option>
+  </select>
+
+  <label>Mês</label>
+  <select id="sel-mesano">
+    <option value="">Todos</option>
+  </select>
+
+  <button id="btnPesquisar">
+    Pesquisar
+  </button>
+
+  <div class="toggle">
+    <button class="active" id="btnLinha">
+      Por Linha
+    </button>
+
+    <button id="btnSku">
+      Por SKU
+    </button>
+  </div>
+
+</div>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+  <th></th>
+
+  <th colspan="2">PLANO</th>
+  <th colspan="2">REALIZADO</th>
+  <th colspan="2">VARIAÇÃO</th>
+  <th colspan="2">GANHO / PERDA</th>
+</tr>
+
+<tr>
+
+  <th>PRODUTO / LINHA</th>
+
+  <th class="sep">QTD</th>
+  <th>PREÇO</th>
+
+  <th class="sep">QTD</th>
+  <th>PREÇO</th>
+
+  <th class="sep">Δ QTD</th>
+  <th>Δ PREÇO</th>
+
+  <th class="sep">R$ QTD</th>
+  <th>R$ PREÇO</th>
+
+</tr>
+
+</thead>
+
+<tbody id="tbody">
+
+<tr>
+<td colspan="9" class="loading">
+Carregando...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+<div class="status" id="status">
+Aguardando dados...
+</div>
+
+<script>
+
+const API = 'http://localhost:5000';
+
+let nivelAtual = 'linha';
+
+/* ─── REFERÊNCIAS AOS ELEMENTOS DOM ───────────────────────────────────────
+   FIX: IDs com hífen não são identificadores JS válidos.
+        Usar document.getElementById() em vez de acesso direto pelo nome.
+ */
+const selVendedor = document.getElementById('sel-vendedor');
+const selGerente  = document.getElementById('sel-gerente');
+const selUf       = document.getElementById('sel-uf');
+const selMesano   = document.getElementById('sel-mesano');
+const tbody       = document.getElementById('tbody');
+const statusEl    = document.getElementById('status');
+const btnPesquisar = document.getElementById('btnPesquisar');
+const btnLinha    = document.getElementById('btnLinha');
+const btnSku      = document.getElementById('btnSku');
+const kpiPreco    = document.getElementById('kpi-preco');
+const kpiVolume   = document.getElementById('kpi-volume');
+
+/* ─── FORMATADORES ────────────────────────────────────────────────────── */
+
+const fmtN = n => {
+  if (n == null || isNaN(n)) return '-';
+  return new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 0 }).format(n);
+};
+
+const fmtP = n => {
+  if (n == null || isNaN(n)) return '-';
+  return new Intl.NumberFormat('pt-BR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(n);
+};
+
+const fmtR = n => {
+  if (n == null || isNaN(n)) return '-';
+  return (n < 0 ? '(' : '') +
+    new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 0 }).format(Math.abs(n)) +
+    (n < 0 ? ')' : '');
+};
+
+const cls = n => {
+  if (n == null || isNaN(n)) return '';
+  return n < 0 ? 'neg' : n > 0 ? 'pos' : '';
+};
+
+function td(v, c = '') {
+  return `<td class="${c}">${v}</td>`;
+}
+
+/* ─── TOGGLE LINHA / SKU ─────────────────────────────────────────────── */
+
+btnLinha.onclick = () => {
+  nivelAtual = 'linha';
+  btnLinha.classList.add('active');
+  btnSku.classList.remove('active');
+  carregarDados();
+};
+
+btnSku.onclick = () => {
+  nivelAtual = 'sku';
+  btnSku.classList.add('active');
+  btnLinha.classList.remove('active');
+  carregarDados();
+};
+
+/* ─── FILTROS ─────────────────────────────────────────────────────────── */
+
+async function carregarFiltros() {
+
+  try {
+
+    const r = await fetch(`${API}/filtros`);
+    const d = await r.json();
+
+    const opt = arr =>
+      '<option value="">Todos</option>' +
+      arr.map(v => `<option value="${v}">${v}</option>`).join('');
+
+    selVendedor.innerHTML = opt(d.vendedores);
+    selGerente.innerHTML  = opt(d.gerentes);
+
+    selUf.innerHTML =
+      '<option value="">Todas</option>' +
+      d.ufs.map(v => `<option value="${v}">${v}</option>`).join('');
+
+    /* FIX: a API retorna d.meses (não d.mesanos) como lista de
+            objetos {value, label} — ex: {value:202601, label:"Jan/2026"} */
+    selMesano.innerHTML =
+      '<option value="">Todos</option>' +
+      d.meses.map(m => `<option value="${m.value}">${m.label}</option>`).join('');
+
+  } catch (e) {
+
+    statusEl.textContent = '⚠️ Backend offline — verifique se o servidor está rodando em localhost:5000';
+  }
+}
+
+/* ─── DADOS ───────────────────────────────────────────────────────────── */
+
+async function carregarDados() {
+
+  tbody.innerHTML = `<tr><td colspan="9" class="loading">Carregando...</td></tr>`;
+
+  const params = new URLSearchParams();
+  params.set('nivel', nivelAtual);
+
+  /* FIX: usar .value dos elementos capturados via getElementById */
+  if (selVendedor.value) params.set('vendedor', selVendedor.value);
+  if (selGerente.value)  params.set('gerente',  selGerente.value);
+  if (selUf.value)       params.set('uf',        selUf.value);
+  if (selMesano.value)   params.set('mesano',    selMesano.value);
+
+  try {
+
+    btnPesquisar.disabled     = true;
+    btnPesquisar.textContent  = 'Carregando...';
+
+    const r = await fetch(`${API}/dados?${params}`);
+    const d = await r.json();
+
+    /* KPI */
+    kpiPreco.textContent  = fmtR(d.total_ganho_preco);
+    kpiPreco.className    = cls(d.total_ganho_preco);
+
+    kpiVolume.textContent = fmtR(d.total_ganho_qtd);
+    kpiVolume.className   = cls(d.total_ganho_qtd);
+
+    /* EMPTY */
+    if (!d.rows || d.rows.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="9" class="loading">Nenhum dado encontrado</td></tr>`;
+      return;
+    }
+
+    let html = '';
+
+    d.rows.forEach(r => {
+      html += `
+      <tr class="subtotal">
+        <td>${r.linha}</td>
+
+        ${td(fmtN(r.plano_qtd),   'sep')}
+        ${td(fmtP(r.plano_preco))}
+
+        ${td(fmtN(r.real_qtd),    'sep')}
+        ${td(fmtP(r.real_preco))}
+
+        ${td(fmtR(r.var_qtd),     'sep ' + cls(r.var_qtd))}
+        ${td(fmtP(r.var_preco),   cls(r.var_preco))}
+
+        ${td(fmtR(r.ganho_qtd),   'sep ' + cls(r.ganho_qtd))}
+        ${td(fmtR(r.ganho_preco), cls(r.ganho_preco))}
+      </tr>`;
+    });
+
+    /* TOTAL */
+    const totalPlan = d.rows.reduce((a, b) => a + b.plano_qtd, 0);
+    const totalReal = d.rows.reduce((a, b) => a + b.real_qtd,  0);
+
+    html += `
+    <tr class="total">
+      <td>TOTAL</td>
+
+      ${td(fmtN(totalPlan),                         'sep')}
+      ${td('-')}
+
+      ${td(fmtN(totalReal),                         'sep')}
+      ${td('-')}
+
+      ${td(fmtR(totalReal - totalPlan),             'sep ' + cls(totalReal - totalPlan))}
+      ${td('-')}
+
+      ${td(fmtR(d.total_ganho_qtd),   'sep ' + cls(d.total_ganho_qtd))}
+      ${td(fmtR(d.total_ganho_preco), cls(d.total_ganho_preco))}
+    </tr>`;
+
+    tbody.innerHTML = html;
+    statusEl.textContent = `${d.rows.length} registros carregados`;
+
+  } catch (e) {
+
+    console.error(e);
+
+    tbody.innerHTML = `<tr><td colspan="9" class="loading">Erro ao carregar backend — verifique o console.</td></tr>`;
+
+  } finally {
+
+    btnPesquisar.disabled    = false;
+    btnPesquisar.textContent = 'Pesquisar';
+  }
+}
+
+/* ─── INIT ────────────────────────────────────────────────────────────── */
+
+btnPesquisar.onclick = carregarDados;
+
+window.onload = async () => {
+  await carregarFiltros();
+  await carregarDados();
+};
+
+</script>
+
+</body>
+</html>
