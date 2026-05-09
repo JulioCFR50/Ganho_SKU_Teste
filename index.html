@@ -16,7 +16,7 @@
     --text: #1e293b;
     --muted: #64748b;
     --neg: #dc2626;
-    --pos: #16a34a;
+    --pos: #1e293b;
     --font: "DM Sans", sans-serif;
     --mono: "DM Mono", monospace;
   }
@@ -53,13 +53,46 @@
 
   .brand { display: flex; align-items: center; gap: 14px; }
   .brand-logo {
-    width: 44px; height: 44px; flex-shrink: 0;
-    border-radius: 10px; background: var(--accent);
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 20px; color: #fff;
-  }
-  .brand h1 { font-size: 15px; font-weight: 700; }
-  .brand h2 { font-size: 11px; color: var(--muted); font-weight: 400; margin-top: 2px; }
+    width: 80px;
+    height: 80px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    overflow: visible;
+    padding: 0;
+}
+
+.brand-logo img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    display: block;
+}
+
+.brand-logo img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    display: block;
+}
+  .brand h1 { font-size: 18px; font-weight: 700;color: #d62828; }
+  .brand h2 {
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 700;
+    margin-top: 2px;
+}
 
   .kpis { display: flex; gap: 10px; }
   .kpi {
@@ -105,7 +138,7 @@
     overflow-y: auto;
     overflow-x: auto;
     background: var(--bg);
-    padding: 0 64px;
+    padding: 0 10px;
   }
 
   .table-box {
@@ -186,7 +219,7 @@
     background: #dde3ee;
     background-clip: padding-box;
     font-weight: 700;
-    padding: 9px 12px;
+    padding: 4px 12px;
     text-align: right;
     font-family: var(--mono);
     font-size: 12px;
@@ -206,7 +239,7 @@
   tbody { position: relative; z-index: 1; }
 
   tbody td {
-    padding: 9px 12px;
+    padding: 4px 12px;
     border-bottom: 1px solid var(--border);
     text-align: right;
     font-family: var(--mono);
@@ -291,6 +324,7 @@
     tbody tr { page-break-inside: avoid !important; break-inside: avoid !important; }
     .sep     { border-left: 1.5px solid #dbe2ea !important; }
   }
+  
 </style>
 </head>
 <body>
@@ -298,7 +332,11 @@
 
   <div class="header">
     <div class="brand">
-      <div class="brand-logo">CV</div>
+      <div class="brand-logo">
+    <div class="brand-logo">
+    <img src="imagens/coco.jpg" alt="Logo Coco do Vale">
+</div>
+  </div>
       <div>
         <h1>Companhia Alimentícia do Vale</h1>
         <h2>Ganho por SKU · Mercado Interno</h2>
