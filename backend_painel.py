@@ -83,74 +83,46 @@ def criar_plano_exemplo():
 def carregar_dados():
 
     BASE = os.path.dirname(os.path.abspath(__file__))
+    dados_path = os.path.join(BASE, 'Dados.xlsx')
+    plano_path = os.path.join(BASE, 'XLS_VOLUME_PREÇO_PREVISTO.xlsx')
 
     try:
-        # FIX 1: header=1 — a linha 0 do Dados.xlsx é um resumo;
-        #         os cabeçalhos reais estão na linha 1 (índice 1).
-        df_dados = pd.read_excel(
-            os.path.join(BASE, 'Dados.xlsx'),
-            header=1
-        )
-
-        # FIX 2: não existe Linha_produto.xlsx separado;
-        #         o arquivo de volume/preço tem as duas abas necessárias.
-        df_vol = pd.read_excel(
-            os.path.join(BASE, 'XLS_VOLUME_PREÇO_PREVISTO.xlsx'),
-            sheet_name='VOLUME PREVISTO'
-        )
-
-        df_preco = pd.read_excel(
-            os.path.join(BASE, 'XLS_VOLUME_PREÇO_PREVISTO.xlsx'),
-            sheet_name='PREÇO LÍQ. PREVISTO'
-        )
-
+        df_dados = pd.read_excel(dados_path, header=1, sheet_name=0)
+        df_vol = pd.read_excel(plano_path, sheet_name='VOLUME PREVISTO')
+        df_preco = pd.read_excel(plano_path, sheet_name='PREÇO LÍQ. PREVISTO')
         print('✅ Excel carregado com sucesso')
 
     except Exception as e:
-
-        print(f'⚠️  Usando dados de exemplo: {e}')
-        df_dados        = criar_dados_exemplo()
+        print(f'⚠️ Usando dados de exemplo: {e}')
+        df_dados = criar_dados_exemplo()
         df_vol, df_preco = criar_plano_exemplo()
 
-    # ─────────────────────────────────────────
-    # LIMPAR COLUNAS
-    # ─────────────────────────────────────────
+    df_dados.columns = df_dados.columns.astype(str).str.strip()
+    df_vol.columns   = df_vol.columns.astype(str).str.strip()
+    df_preco.columns = df_preco.columns.astype(str).str.strip()
 
-    df_dados.columns  = df_dados.columns.str.strip()
-    df_vol.columns    = df_vol.columns.astype(str).str.strip()
-    df_preco.columns  = df_preco.columns.astype(str).str.strip()
-
-    # ─────────────────────────────────────────
-    # FILTRAR MERCADO INTERNO
-    # ─────────────────────────────────────────
+    if 'Linha ' in df_dados.columns:
+        df_dados = df_dados.rename(columns={'Linha ': 'Linha'})
 
     if 'Mercado' in df_dados.columns:
-        df_dados = df_dados[df_dados['Mercado'] == 'Mercado Interno'].copy()
+        df_dados = df_dados[df_dados['Mercado'].astype(str).str.contains('Interno', case=False, na=False)].copy()
 
-    # ─────────────────────────────────────────
-    # EXTRAIR CÓDIGO DO PRODUTO
-    # ─────────────────────────────────────────
-
+    df_dados['Produtos'] = df_dados['Produtos'].astype(str).str.strip()
     df_dados['cod_prod'] = (
         df_dados['Produtos']
-        .astype(str)
         .str.extract(r'^(\d+)')[0]
-        .fillna('0')
+        .fillna('')
+        .astype(str)
         .str.strip()
     )
-
-    # ─────────────────────────────────────────
-    # NUMÉRICOS
-    # ─────────────────────────────────────────
+    df_dados = df_dados[df_dados['cod_prod'] != ''].copy()
 
     for col in ['Qtd Vend.', 'Preço UN.', 'Receita Líquida']:
         if col in df_dados.columns:
-            df_dados[col] = pd.to_numeric(df_dados[col], errors='coerce').fillna(0)
-
-    # ─────────────────────────────────────────
-    # MAPEAMENTO cod_prod → Linha
-    # FIX 3: derivado do próprio Dados.xlsx (não precisa de arquivo externo)
-    # ─────────────────────────────────────────
+            df_dados[col] = pd.to_numeric(
+                df_dados[col].astype(str).str.replace(',', '.', regex=False),
+                errors='coerce'
+            ).fillna(0)
 
     df_linha = (
         df_dados[['cod_prod', 'Linha']]
@@ -160,31 +132,24 @@ def carregar_dados():
     )
     df_linha['CODIGO'] = df_linha['CODIGO'].astype(str).str.strip()
 
-    # ─────────────────────────────────────────
-    # PLANO: filtrar INTERNO
-    # ─────────────────────────────────────────
-
-    df_vol_int   = df_vol[df_vol['Mercador'] == 'INTERNO'].copy()
-    df_preco_int = df_preco[df_preco['MERCADO'] == 'Interno'].copy()
+    df_vol_int   = df_vol[df_vol['Mercador'].astype(str).str.upper() == 'INTERNO'].copy()
+    df_preco_int = df_preco[df_preco['MERCADO'].astype(str).str.upper() == 'INTERNO'].copy()
 
     df_vol_int['CODIGO']   = df_vol_int['CODIGO'].astype(str).str.strip()
     df_preco_int['CODIGO'] = df_preco_int['CODIGO'].astype(str).str.strip()
 
-    # Colunas de mês (inteiros no Excel como 202601, 202602 …)
     month_cols = [
         c for c in df_vol_int.columns
-        if str(c).isdigit() and len(str(c)) == 6
+        if str(c).isdigit() and len(str(int(c))) == 6
     ]
 
-    # Melt volume
     df_vol_m = df_vol_int.melt(
-        id_vars=['CODIGO', 'DESCRICAO'],
+        id_vars=[c for c in ['CODIGO', 'DESCRICAO'] if c in df_vol_int.columns],
         value_vars=month_cols,
         var_name='mes',
         value_name='vol_plano'
     )
 
-    # Melt preço
     df_preco_m = df_preco_int.melt(
         id_vars=['CODIGO'],
         value_vars=month_cols,
@@ -192,15 +157,13 @@ def carregar_dados():
         value_name='preco_plano'
     )
 
-    df_vol_m['mes']           = df_vol_m['mes'].astype(int)
-    df_preco_m['mes']         = df_preco_m['mes'].astype(int)
-    df_vol_m['vol_plano']     = pd.to_numeric(df_vol_m['vol_plano'],     errors='coerce').fillna(0)
+    df_vol_m['mes']         = df_vol_m['mes'].astype(int)
+    df_preco_m['mes']       = df_preco_m['mes'].astype(int)
+    df_vol_m['vol_plano']   = pd.to_numeric(df_vol_m['vol_plano'],   errors='coerce').fillna(0)
     df_preco_m['preco_plano'] = pd.to_numeric(df_preco_m['preco_plano'], errors='coerce').fillna(0)
 
     plano = df_vol_m.merge(df_preco_m, on=['CODIGO', 'mes'], how='inner')
     plano['receita_plano'] = plano['vol_plano'] * plano['preco_plano']
-
-    # FIX 4: join Linha usando mapeamento derivado do Dados.xlsx
     plano = plano.merge(df_linha, on='CODIGO', how='left')
     plano['Linha'] = plano['Linha'].fillna('Outros')
 
@@ -219,7 +182,6 @@ def safe_div(a, b):
 
 
 def fmt_mes(m):
-    """Converte 202601 → {'value': 202601, 'label': 'Jan/2026'}"""
     s     = str(int(m))
     nomes = ['Jan','Fev','Mar','Abr','Mai','Jun',
              'Jul','Ago','Set','Out','Nov','Dez']
@@ -229,20 +191,39 @@ def fmt_mes(m):
     }
 
 
+def sku_valido(sku: str, produto: str) -> bool:
+    """
+    Retorna False se o SKU ou produto for vazio, '0', 'nan',
+    ou se a combinação "SKU - PRODUTO" for inválida.
+    """
+    sku     = str(sku).strip()
+    produto = str(produto).strip()
+
+    invalidos = {'', '0', 'nan', 'none', 'null', '-'}
+
+    if sku.lower()     in invalidos: return False
+    if produto.lower() in invalidos: return False
+
+    # ex: "0 - 0", " - ", "0 - nan"
+    nome = f"{sku} - {produto}".lower()
+    if nome in {'0 - 0', ' - ', '0 - nan', 'nan - nan'}: return False
+
+    return True
+
+
 # ─────────────────────────────────────────────────────────────
 # ENDPOINT FILTROS
 # ─────────────────────────────────────────────────────────────
 
 @app.route('/filtros', methods=['GET'])
 def filtros():
-
     meses = sorted(plano['mes'].unique().tolist())
-
-    # FIX 5: retorna objetos {value, label} em vez de inteiros puros
     return jsonify({
         'vendedores': sorted(df_dados['Vendedor'].dropna().unique().tolist()),
         'gerentes':   sorted(df_dados['Gerente'].dropna().unique().tolist()),
         'ufs':        sorted(df_dados['UF'].dropna().unique().tolist()),
+        'linhas':     sorted(df_dados['Linha'].dropna().unique().tolist()),
+        'skus':       sorted(plano['CODIGO'].dropna().astype(str).unique().tolist()),
         'meses':      [fmt_mes(m) for m in meses],
     })
 
@@ -257,116 +238,152 @@ def dados():
     vendedor = request.args.get('vendedor')
     gerente  = request.args.get('gerente')
     uf       = request.args.get('uf')
+    linha    = request.args.get('linha')
+    sku      = request.args.get('sku')
     mesano   = request.args.get('mesano')
-    nivel    = request.args.get('nivel', 'linha')   # 'linha' ou 'sku'
+    nivel    = request.args.get('nivel', 'linha')
 
     df_r = df_dados.copy()
     pl   = plano.copy()
 
-    if vendedor:
-        df_r = df_r[df_r['Vendedor'] == vendedor]
+    if vendedor: df_r = df_r[df_r['Vendedor'] == vendedor]
+    if gerente:  df_r = df_r[df_r['Gerente']  == gerente]
+    if uf:       df_r = df_r[df_r['UF']       == uf]
+    if linha:    df_r = df_r[df_r['Linha']     == linha]
+    if sku:      df_r = df_r[df_r['cod_prod']   == sku]
+    if mesano:   pl   = pl[pl['mes']           == int(mesano)]
+    if sku:      pl   = pl[pl['CODIGO']        == sku]
+    if linha:    pl   = pl[pl['Linha']         == linha]
 
-    if gerente:
-        df_r = df_r[df_r['Gerente'] == gerente]
+    # ─── REAL por SKU ───
+    real = df_r.groupby(['cod_prod', 'Produtos', 'Linha']).agg(
+        qtd_real    =('Qtd Vend.',        'sum'),
+        receita_real=('Receita Líquida',  'sum')
+    ).reset_index()
+    real['preco_real'] = real.apply(
+        lambda x: safe_div(x['receita_real'], x['qtd_real']), axis=1
+    )
+    real = real.rename(columns={'cod_prod': 'CODIGO'})
 
-    if uf:
-        df_r = df_r[df_r['UF'] == uf]
+    # ─── PLANO por SKU ───
+    plan = pl.groupby(['CODIGO', 'DESCRICAO', 'Linha']).agg(
+        qtd_plan    =('vol_plano',     'sum'),
+        receita_plan=('receita_plano', 'sum')
+    ).reset_index()
+    plan['preco_plan'] = plan.apply(
+        lambda x: safe_div(x['receita_plan'], x['qtd_plan']), axis=1
+    )
+    plan['sku']     = plan['CODIGO'].astype(str)
+    plan['produto'] = plan['DESCRICAO'].astype(str)
 
-    if mesano:
-        pl = pl[pl['mes'] == int(mesano)]
-
-    # ─────────────────────────────────────────
-    # FIX 6: suporte ao nível SKU (Por Produto)
-    # ─────────────────────────────────────────
-
-    if nivel == 'sku':
-
-        # REAL agrupado por produto
-        real = df_r.groupby(['cod_prod', 'Produtos', 'Linha']).agg(
-            qtd_real=('Qtd Vend.',       'sum'),
-            receita_real=('Receita Líquida', 'sum')
-        ).reset_index()
-
-        real['preco_real'] = real.apply(
-            lambda x: safe_div(x['receita_real'], x['qtd_real']), axis=1
-        )
-        real = real.rename(columns={'cod_prod': 'CODIGO'})
-
-        # PLANO agrupado por produto
-        plan = pl.groupby(['CODIGO', 'DESCRICAO', 'Linha']).agg(
-            qtd_plan=('vol_plano',     'sum'),
-            receita_plan=('receita_plano', 'sum')
-        ).reset_index()
-
-        plan['preco_plan'] = plan.apply(
-            lambda x: safe_div(x['receita_plan'], x['qtd_plan']), axis=1
-        )
-        plan['nome'] = plan['CODIGO'].astype(str) + ' - ' + plan['DESCRICAO'].astype(str)
-
-        # Merge por CODIGO
-        final = plan[['CODIGO','nome','Linha','qtd_plan','preco_plan']].merge(
-            real[['CODIGO','qtd_real','preco_real']],
-            on='CODIGO',
-            how='outer'
-        ).fillna(0)
-
-        nome_col = 'nome'
-
-    else:
-
-        # REAL por Linha
-        real = df_r.groupby('Linha').agg(
-            qtd_real=('Qtd Vend.',       'sum'),
-            receita_real=('Receita Líquida', 'sum')
-        ).reset_index()
-
-        real['preco_real'] = real.apply(
-            lambda x: safe_div(x['receita_real'], x['qtd_real']), axis=1
-        )
-
-        # PLANO por Linha
-        plan = pl.groupby('Linha').agg(
-            qtd_plan=('vol_plano',     'sum'),
-            receita_plan=('receita_plano', 'sum')
-        ).reset_index()
-
-        plan['preco_plan'] = plan.apply(
-            lambda x: safe_div(x['receita_plan'], x['qtd_plan']), axis=1
-        )
-
-        final    = plan.merge(real, on='Linha', how='outer').fillna(0)
-        nome_col = 'Linha'
-
-    # ─────────────────────────────────────────
-    # MONTAR LINHAS DE RESPOSTA
-    # ─────────────────────────────────────────
+    final = plan.merge(
+        real[['CODIGO', 'qtd_real', 'preco_real']],
+        on='CODIGO', how='outer'
+    ).fillna(0)
+    final['Linha']   = final['Linha'].fillna('Outros').astype(str)
+    final['sku']     = final['sku'].fillna('').astype(str)
+    final['produto'] = final['produto'].fillna('').astype(str)
 
     rows = []
 
-    for _, r in final.iterrows():
+    if nivel == 'sku':
+        for _, r in final.iterrows():
+            sku     = str(r.get('sku', '')).strip()
+            produto = str(r.get('produto', '')).strip()
 
-        nome      = str(r.get(nome_col, '-'))
-        qtd_plan  = float(r.get('qtd_plan',  0))
-        qtd_real  = float(r.get('qtd_real',  0))
-        preco_plan = float(r.get('preco_plan', 0))
-        preco_real = float(r.get('preco_real', 0))
+            # ── OCULTA linhas com SKU/produto inválido ou zerado ──
+            if not sku_valido(sku, produto):
+                continue
 
-        var_qtd   = qtd_real  - qtd_plan
-        var_preco = preco_real - preco_plan
-        ganho_qtd   = var_qtd   * preco_plan
-        ganho_preco = var_preco * qtd_real
+            qtd_plan   = float(r.get('qtd_plan',   0))
+            qtd_real   = float(r.get('qtd_real',   0))
+            preco_plan = float(r.get('preco_plan',  0))
+            preco_real = float(r.get('preco_real',  0))
 
-        rows.append({
-            'linha':       nome,
-            'plano_qtd':   round(qtd_plan,   2),
-            'plano_preco': round(preco_plan,  2),
-            'real_qtd':    round(qtd_real,    2),
-            'real_preco':  round(preco_real,  2),
-            'var_qtd':     round(var_qtd,     2),
-            'var_preco':   round(var_preco,   2),
-            'ganho_qtd':   round(ganho_qtd,   2),
-            'ganho_preco': round(ganho_preco, 2),
-        })
+            # Oculta se tudo for zero
+            if qtd_plan == 0 and qtd_real == 0 and preco_plan == 0 and preco_real == 0:
+                continue
+
+            var_qtd     = qtd_real  - qtd_plan
+            var_preco   = preco_real - preco_plan
+            ganho_qtd   = var_qtd   * preco_plan
+            ganho_preco = var_preco * qtd_real
+
+            rows.append({
+                'type':        'sku',
+                'linha':       str(r.get('Linha', '') or ''),
+                'sku':         sku,
+                'produto':     produto,
+                'plano_qtd':   round(qtd_plan,   2),
+                'plano_preco': round(preco_plan,  2),
+                'real_qtd':    round(qtd_real,    2),
+                'real_preco':  round(preco_real,  2),
+                'var_qtd':     round(var_qtd,     2),
+                'var_preco':   round(var_preco,   2),
+                'ganho_qtd':   round(ganho_qtd,   2),
+                'ganho_preco': round(ganho_preco, 2),
+            })
+
+    else:
+        for linha, group in final.groupby('Linha', sort=True):
+            qtd_plan     = group['qtd_plan'].sum()
+            receita_plan = group['receita_plan'].sum() if 'receita_plan' in group else 0
+            qtd_real     = group['qtd_real'].sum()
+            receita_real = group.get('receita_real', pd.Series([0])).sum()
+            preco_plan   = safe_div(receita_plan, qtd_plan)
+            preco_real   = safe_div(receita_real, qtd_real)
+
+            rows.append({
+                'type':        'linha',
+                'linha':       str(linha),
+                'sku':         '',
+                'produto':     '',
+                'plano_qtd':   round(qtd_plan,   2),
+                'plano_preco': round(preco_plan,  2),
+                'real_qtd':    round(qtd_real,    2),
+                'real_preco':  round(preco_real,  2),
+                'var_qtd':     round(qtd_real - qtd_plan, 2),
+                'var_preco':   round(preco_real - preco_plan, 2),
+                'ganho_qtd':   round((qtd_real - qtd_plan) * preco_plan, 2),
+                'ganho_preco': round((preco_real - preco_plan) * qtd_real, 2),
+            })
+
+            for _, item in group.sort_values(['sku', 'produto']).iterrows():
+                sku     = str(item.get('sku',     '')).strip()
+                produto = str(item.get('produto', '')).strip()
+
+                # ── OCULTA linhas com SKU/produto inválido ou zerado ──
+                if not sku_valido(sku, produto):
+                    continue
+
+                qtd_plan_i   = float(item.get('qtd_plan',   0))
+                qtd_real_i   = float(item.get('qtd_real',   0))
+                preco_plan_i = float(item.get('preco_plan',  0))
+                preco_real_i = float(item.get('preco_real',  0))
+
+                # Oculta se tudo for zero
+                if qtd_plan_i == 0 and qtd_real_i == 0 and preco_plan_i == 0 and preco_real_i == 0:
+                    continue
+
+                var_qtd     = qtd_real_i  - qtd_plan_i
+                var_preco   = preco_real_i - preco_plan_i
+                ganho_qtd   = var_qtd   * preco_plan_i
+                ganho_preco = var_preco * qtd_real_i
+
+                rows.append({
+                    'type':        'sku',
+                    'linha':       str(linha),
+                    'sku':         sku,
+                    'produto':     produto,
+                    'plano_qtd':   round(qtd_plan_i,   2),
+                    'plano_preco': round(preco_plan_i,  2),
+                    'real_qtd':    round(qtd_real_i,    2),
+                    'real_preco':  round(preco_real_i,  2),
+                    'var_qtd':     round(var_qtd,       2),
+                    'var_preco':   round(var_preco,     2),
+                    'ganho_qtd':   round(ganho_qtd,     2),
+                    'ganho_preco': round(ganho_preco,   2),
+                })
 
     total_ganho_preco = sum(r['ganho_preco'] for r in rows)
     total_ganho_qtd   = sum(r['ganho_qtd']   for r in rows)
@@ -383,8 +400,6 @@ def dados():
 # ─────────────────────────────────────────────────────────────
 
 if __name__ == '__main__':
-
     print('🚀 Servidor iniciado')
     print('🌐 http://localhost:5000')
-
     app.run(debug=True, host='0.0.0.0', port=5000)
