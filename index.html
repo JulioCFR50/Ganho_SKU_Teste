@@ -143,7 +143,6 @@
     isolation: isolate;
   }
 
-  /* Camada opaca atrás de cada th para bloquear o tbody */
   thead th::before {
     content: '';
     position: absolute;
@@ -235,6 +234,63 @@
     background: var(--surface);
     border-top: 1px solid var(--border);
   }
+
+  /* ======================================
+     IMPRESSÃO — A4 Paisagem
+     Regra: não mexer no CSS acima.
+     Apenas sobrescrever o necessário aqui.
+  ====================================== */
+  @media print {
+    @page { size: A4 landscape; margin: 8mm 10mm; }
+
+    html, body   { overflow: visible !important; height: auto !important; background: #fff !important; font-size: 9px !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .app         { height: auto !important; display: block !important; }
+    .filters,
+    .status      { display: none !important; }
+
+    /* Header da aplicação: compacto, sem box-shadow */
+    .header      { padding: 5px 8px !important; box-shadow: none !important; border-bottom: 1px solid #ccc !important; margin-bottom: 3px !important; }
+    .brand-logo  { width: 26px !important; height: 26px !important; font-size: 12px !important; }
+    .brand h1    { font-size: 10px !important; }
+    .brand h2    { font-size: 8px !important; }
+    .kpi         { padding: 3px 8px !important; min-width: 100px !important; }
+    .kpi small   { font-size: 6.5px !important; }
+    .kpi h3      { font-size: 12px !important; margin-top: 2px !important; }
+
+    /* Tabela sem scroll */
+    .table-wrap  { flex: none !important; overflow: visible !important; padding: 0 !important; background: #fff !important; }
+    .table-box   { border: none !important; border-radius: 0 !important; }
+
+    /* Colunas */
+    .col-produto { width: 30% !important; }
+    .col-small   { width: 8.75% !important; }
+
+    table        { width: 100% !important; table-layout: fixed !important; font-size: 8px !important; border-collapse: collapse !important; }
+
+    /* thead repete em todas as páginas — resetar sticky */
+    thead        { display: table-header-group !important; }
+    thead th     { position: static !important; top: auto !important; box-shadow: none !important; font-size: 7.5px !important; padding: 3px 4px !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    thead th::before { display: none !important; }
+
+    thead tr:first-child th  { background: #6b7280 !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    thead tr:nth-child(2) th { background: #9ca3af !important; color: #fff !important; box-shadow: none !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+    /* tfoot estático */
+    tfoot        { display: table-footer-group !important; }
+    tfoot td     { position: static !important; box-shadow: none !important; font-size: 8px !important; padding: 3px 4px !important; background: #dde3ee !important; border-top: 2px solid #b0bcc8 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    tfoot td:first-child { padding-left: 12px !important; }
+
+    /* Células */
+    th, td       { white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; padding: 2.5px 4px !important; }
+    td:first-child { padding-left: 12px !important; }
+
+    tbody td     { font-size: 8px !important; background: #fff !important; }
+    .group-line td { background: #e8edf4 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .subtotal td   { background: #f8fafc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+    tbody tr { page-break-inside: avoid !important; break-inside: avoid !important; }
+    .sep     { border-left: 1.5px solid #dbe2ea !important; }
+  }
 </style>
 </head>
 <body>
@@ -268,6 +324,9 @@
     <label for="sel-mesano">Mês</label>
     <select id="sel-mesano"><option value="">Todos</option></select>
     <button id="btnPesquisar">Pesquisar</button>
+    <button id="btnLimpar" style="background:#64748b;">Limpar</button>
+    <button id="btnImprimir" style="background:#0f172a;">Imprimir</button>
+
     <div class="toggle">
       <button class="active" id="btnLinha">Por Linha</button>
       <button id="btnSku">Por SKU</button>
@@ -325,6 +384,7 @@
   const tfoot        = document.getElementById("tfoot");
   const statusEl     = document.getElementById("status");
   const btnPesquisar = document.getElementById("btnPesquisar");
+  const btnLimpar    = document.getElementById("btnLimpar");
   const btnLinha     = document.getElementById("btnLinha");
   const btnSku       = document.getElementById("btnSku");
   const kpiPreco     = document.getElementById("kpi-preco");
@@ -352,6 +412,21 @@
     nivelAtual = "sku"; btnSku.classList.add("active"); btnLinha.classList.remove("active");
     carregarDados();
   };
+
+  btnLimpar.onclick = () => {
+    selVendedor.value = "";
+    selGerente.value  = "";
+    selUf.value       = "";
+    selLinha.value    = "";
+    selSku.value      = "";
+    selMesano.value   = "";
+    nivelAtual = "linha";
+    btnLinha.classList.add("active");
+    btnSku.classList.remove("active");
+    carregarDados();
+  };
+
+  document.getElementById("btnImprimir").onclick = () => window.print();
 
   async function carregarFiltros() {
     try {
@@ -408,10 +483,8 @@
 
       const rowValido = (row) => {
         if (row.type === "linha") {
-          // Oculta linha de grupo com nome inválido
           return !ehInvalido(row.linha);
         }
-        // SKU: oculta se sku ou produto inválido
         const s = strLimpo(row.sku);
         const p = strLimpo(row.produto);
         if (ehInvalido(s) || ehInvalido(p)) return false;
