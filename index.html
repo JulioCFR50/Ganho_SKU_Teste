@@ -1,594 +1,904 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel Comercial</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
-<style>
-  :root {
-    --bg: #f4f6f9;
-    --surface: #ffffff;
-    --card: #f8fafc;
-    --border: #dbe2ea;
-    --accent: #d62828;
-    --accent2: #2563eb;
-    --text: #1e293b;
-    --muted: #64748b;
-    --neg: #dc2626;
-    --pos: #1e293b;
-    --font: "DM Sans", sans-serif;
-    --mono: "DM Mono", monospace;
-  }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel Comercial</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f4f6f9;
+        --surface: #ffffff;
+        --card: #f8fafc;
+        --border: #dbe2ea;
+        --accent: #d62828;
+        --accent2: #2563eb;
+        --text: #1e293b;
+        --muted: #64748b;
+        --neg: #dc2626;
+        --pos: #1e293b;
+        --font: "DM Sans", sans-serif;
+        --mono: "DM Mono", monospace;
+      }
 
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-  html, body {
-    height: 100%;
-    overflow: hidden;
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font);
-    font-size: 13px;
-  }
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font);
+        font-size: 13px;
+      }
 
-  .app {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-  }
+      .app {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
 
-  /* HEADER */
-  .header {
-    flex-shrink: 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 24px;
-    gap: 20px;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-  }
+      /* HEADER */
+      .header {
+        flex-shrink: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 24px;
+        gap: 20px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+      }
 
-  .brand { display: flex; align-items: center; gap: 14px; }
-  .brand-logo {
-    width: 80px;
-    height: 80px;
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .brand-logo {
+        width: 80px;
+        height: 80px;
 
-    flex-shrink: 0;
+        flex-shrink: 0;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    overflow: visible;
-    padding: 0;
-}
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        overflow: visible;
+        padding: 0;
+      }
 
-.brand-logo img {
-    width: 100%;
-    height: 100%;
+      .brand-logo img {
+        width: 100%;
+        height: 100%;
 
-    object-fit: contain;
+        object-fit: contain;
 
-    display: block;
-}
+        display: block;
+      }
 
-.brand-logo img {
-    width: 100%;
-    height: 100%;
+      .brand-logo img {
+        width: 100%;
+        height: 100%;
 
-    object-fit: contain;
+        object-fit: contain;
 
-    display: block;
-}
-  .brand h1 { font-size: 18px; font-weight: 700;color: #d62828; }
-  .brand h2 {
-    font-size: 14px;
-    color: var(--muted);
-    font-weight: 700;
-    margin-top: 2px;
-}
+        display: block;
+      }
+      .brand h1 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #d62828;
+      }
+      .brand h2 {
+        font-size: 14px;
+        color: var(--muted);
+        font-weight: 700;
+        margin-top: 2px;
+      }
 
-  .kpis { display: flex; gap: 10px; }
-  .kpi {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 8px; padding: 8px 14px; min-width: 150px;
-  }
-  .kpi small { color: var(--muted); text-transform: uppercase; font-size: 9px; letter-spacing: 0.08em; }
-  .kpi h3 { margin-top: 4px; font-size: 18px; font-family: var(--mono); }
+      .kpis {
+        display: flex;
+        gap: 10px;
+      }
+      .kpi {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 14px;
+        min-width: 150px;
+      }
+      .kpi small {
+        color: var(--muted);
+        text-transform: uppercase;
+        font-size: 9px;
+        letter-spacing: 0.08em;
+      }
+      .kpi h3 {
+        margin-top: 4px;
+        font-size: 18px;
+        font-family: var(--mono);
+      }
 
-  /* FILTROS */
-  .filters {
-    flex-shrink: 0;
-    display: flex; align-items: center; flex-wrap: wrap; gap: 10px;
-    padding: 10px 24px;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-  }
-  .filters label { font-size: 10px; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+      /* FILTROS */
+      .filters {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 10px 24px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+      }
+      .filters label {
+        font-size: 10px;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 700;
+      }
 
-  select {
-    background: #fff; border: 1px solid var(--border); color: var(--text);
-    border-radius: 7px; padding: 7px 10px; min-width: 140px;
-    outline: none; font-family: var(--font); font-size: 12px;
-  }
+      select {
+        background: #fff;
+        border: 1px solid var(--border);
+        color: var(--text);
+        border-radius: 7px;
+        padding: 7px 10px;
+        min-width: 140px;
+        outline: none;
+        font-family: var(--font);
+        font-size: 12px;
+      }
 
-  button {
-    background: var(--accent); border: none; color: #fff;
-    padding: 8px 18px; border-radius: 7px; cursor: pointer;
-    font-weight: 700; font-size: 12px; font-family: var(--font);
-    transition: opacity 0.15s;
-  }
-  button:hover { opacity: 0.88; }
+      button {
+        background: var(--accent);
+        border: none;
+        color: #fff;
+        padding: 8px 18px;
+        border-radius: 7px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 12px;
+        font-family: var(--font);
+        transition: opacity 0.15s;
+      }
+      button:hover {
+        opacity: 0.88;
+      }
 
-  .toggle { margin-left: auto; display: flex; border: 1px solid var(--border); border-radius: 7px; overflow: hidden; }
-  .toggle button { border-radius: 0; background: var(--card); color: var(--muted); }
-  .toggle button.active { background: var(--accent2); color: #fff; }
+      .toggle {
+        margin-left: auto;
+        display: flex;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        overflow: hidden;
+      }
+      .toggle button {
+        border-radius: 0;
+        background: var(--card);
+        color: var(--muted);
+      }
+      .toggle button.active {
+        background: var(--accent2);
+        color: #fff;
+      }
 
-  /* ======================================
+      /* ======================================
      ÁREA DA TABELA
   ====================================== */
-  .table-wrap {
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: auto;
-    background: var(--bg);
-    padding: 0 10px;
-  }
+      .table-wrap {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: auto;
+        background: var(--bg);
+        padding: 0 10px;
+      }
 
-  .table-box {
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    background: #fff;
-  }
+      .table-box {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: #fff;
+      }
 
-  .col-produto { width: 36%; }
-  .col-small { width: 8%; }
+      .col-produto {
+        width: 36%;
+      }
+      .col-small {
+        width: 8%;
+      }
 
-  table {
-    width: 100%;
-    table-layout: fixed;
-    border-collapse: collapse;
-    background: var(--surface);
-  }
+      table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+        background: var(--surface);
+      }
 
-  /* Bordas arredondadas nos cantos */
-  thead tr:first-child th:first-child { border-top-left-radius: 12px; }
-  thead tr:first-child th:last-child  { border-top-right-radius: 12px; }
-  tfoot tr:last-child td:first-child  { border-bottom-left-radius: 12px; }
-  tfoot tr:last-child td:last-child   { border-bottom-right-radius: 12px; }
+      /* Bordas arredondadas nos cantos */
+      thead tr:first-child th:first-child {
+        border-top-left-radius: 12px;
+      }
+      thead tr:first-child th:last-child {
+        border-top-right-radius: 12px;
+      }
+      tfoot tr:last-child td:first-child {
+        border-bottom-left-radius: 12px;
+      }
+      tfoot tr:last-child td:last-child {
+        border-bottom-right-radius: 12px;
+      }
 
-  th, td { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      th,
+      td {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
 
-  /* ======================================
+      /* ======================================
      CABEÇALHO FIXO (sticky topo)
   ====================================== */
-  thead th {
-    position: sticky;
-    z-index: 20;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
-    isolation: isolate;
-  }
+      thead th {
+        position: sticky;
+        z-index: 20;
+        -webkit-background-clip: padding-box;
+        background-clip: padding-box;
+        isolation: isolate;
+      }
 
-  thead th::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: inherit;
-  }
+      thead th::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: inherit;
+      }
 
-  /* Linha 1 */
-  thead tr:first-child th {
-    top: 0;
-    background: #6b7280 !important;
-    color: #ffffff;
-    padding: 10px 12px;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    font-weight: 700;
-    border-bottom: 1px solid #4b5563;
-  }
+      /* Linha 1 */
+      thead tr:first-child th {
+        top: 0;
+        background: #6b7280 !important;
+        color: #ffffff;
+        padding: 10px 12px;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        font-weight: 700;
+        border-bottom: 1px solid #4b5563;
+      }
 
-  /* Linha 2 */
-  thead tr:nth-child(2) th {
-    background: #9ca3af !important;
-    padding: 4px 12px;
-    border-bottom: 2px solid #6b7280;
-    font-size: 10px;
-    font-weight: 700;
-    color: #ffffff;
-    width: 200px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.06);
-  }
+      /* Linha 2 */
+      thead tr:nth-child(2) th {
+        background: #9ca3af !important;
+        padding: 4px 12px;
+        border-bottom: 2px solid #6b7280;
+        font-size: 10px;
+        font-weight: 700;
+        color: #ffffff;
+        width: 200px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+      }
 
-  /* ======================================
+      /* ======================================
      RODAPÉ FIXO (sticky baixo)
   ====================================== */
-  tfoot td {
-    position: sticky;
-    bottom: 0;
-    z-index: 20;
-    background: #dde3ee;
-    background-clip: padding-box;
-    font-weight: 700;
-    padding: 4px 12px;
-    text-align: right;
-    font-family: var(--mono);
-    font-size: 12px;
-    border-top: 2px solid #b0bcc8;
-    box-shadow: 0 -2px 6px rgba(0,0,0,0.08);
-  }
+      tfoot td {
+        position: sticky;
+        bottom: 0;
+        z-index: 20;
+        background: #dde3ee;
+        background-clip: padding-box;
+        font-weight: 700;
+        padding: 4px 12px;
+        text-align: right;
+        font-family: var(--mono);
+        font-size: 12px;
+        border-top: 2px solid #b0bcc8;
+        box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.08);
+      }
 
-  tfoot td:first-child {
-    text-align: left;
-    font-family: var(--font);
-    padding-left: 28px;
-  }
+      tfoot td:first-child {
+        text-align: left;
+        font-family: var(--font);
+        padding-left: 28px;
+      }
 
-  /* ======================================
+      /* ======================================
      CORPO
   ====================================== */
-  tbody { position: relative; z-index: 1; }
+      tbody {
+        position: relative;
+        z-index: 1;
+      }
 
-  tbody td {
-    padding: 4px 12px;
-    border-bottom: 1px solid var(--border);
-    text-align: right;
-    font-family: var(--mono);
-    font-size: 12px;
-    background: #ffffff;
-  }
+      tbody td {
+        padding: 4px 12px;
+        border-bottom: 1px solid var(--border);
+        text-align: right;
+        font-family: var(--mono);
+        font-size: 12px;
+        background: #ffffff;
+      }
 
-  td:first-child { text-align: left; font-family: var(--font); padding-left: 28px; }
-  .sku-row td:first-child { padding-left: 10; }
+      td:first-child {
+        text-align: left;
+        font-family: var(--font);
+        padding-left: 28px;
+      }
+      .sku-row td:first-child {
+        padding-left: 10;
+      }
 
-  tbody tr:hover td { background: #f1f5f9; }
-  .subtotal td { background: #f8fafc; font-weight: 700; }
-  .group-line td { background: #e8edf4; }
-  tbody tr:last-child td { border-bottom: none; }
+      tbody tr:hover td {
+        background: #f1f5f9;
+      }
+      .subtotal td {
+        background: #f8fafc;
+        font-weight: 700;
+      }
+      .group-line td {
+        background: #e8edf4;
+      }
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
 
-  .neg { color: var(--neg) !important; }
-  .pos { color: var(--pos) !important; }
-  .sep { border-left: 2px solid var(--border); }
-  .loading { text-align: center !important; padding: 60px !important; color: var(--muted); }
+      .neg {
+        color: var(--neg) !important;
+      }
+      .pos {
+        color: var(--pos) !important;
+      }
+      .sep {
+        border-left: 2px solid var(--border);
+      }
+      .loading {
+        text-align: center !important;
+        padding: 60px !important;
+        color: var(--muted);
+      }
 
-  .status {
-    flex-shrink: 0;
-    padding: 7px 24px;
-    font-size: 11px; color: var(--muted);
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-  }
+      .status {
+        flex-shrink: 0;
+        padding: 7px 24px;
+        font-size: 11px;
+        color: var(--muted);
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+      }
 
-  /* ======================================
+      /* ======================================
      IMPRESSÃO — A4 Paisagem
      Regra: não mexer no CSS acima.
      Apenas sobrescrever o necessário aqui.
   ====================================== */
-  @media print {
-    @page { size: A4 landscape; margin: 8mm 10mm; }
-
-    html, body   { overflow: visible !important; height: auto !important; background: #fff !important; font-size: 9px !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .app         { height: auto !important; display: block !important; }
-    .filters,
-    .status      { display: none !important; }
-
-    /* Header da aplicação: compacto, sem box-shadow */
-    .header      { padding: 5px 8px !important; box-shadow: none !important; border-bottom: 1px solid #ccc !important; margin-bottom: 3px !important; }
-    .brand-logo  { width: 26px !important; height: 26px !important; font-size: 12px !important; }
-    .brand h1    { font-size: 10px !important; }
-    .brand h2    { font-size: 8px !important; }
-    .kpi         { padding: 3px 8px !important; min-width: 100px !important; }
-    .kpi small   { font-size: 6.5px !important; }
-    .kpi h3      { font-size: 12px !important; margin-top: 2px !important; }
-
-    /* Tabela sem scroll */
-    .table-wrap  { flex: none !important; overflow: visible !important; padding: 0 !important; background: #fff !important; }
-    .table-box   { border: none !important; border-radius: 0 !important; }
-
-    /* Colunas */
-    .col-produto { width: 30% !important; }
-    .col-small   { width: 8.75% !important; }
-
-    table        { width: 100% !important; table-layout: fixed !important; font-size: 8px !important; border-collapse: collapse !important; }
-
-    /* thead repete em todas as páginas — resetar sticky */
-    thead        { display: table-header-group !important; }
-    thead th     { position: static !important; top: auto !important; box-shadow: none !important; font-size: 7.5px !important; padding: 3px 4px !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    thead th::before { display: none !important; }
-
-    thead tr:first-child th  { background: #6b7280 !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    thead tr:nth-child(2) th { background: #9ca3af !important; color: #fff !important; box-shadow: none !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-
-    /* tfoot estático */
-    tfoot        { display: table-footer-group !important; }
-    tfoot td     { position: static !important; box-shadow: none !important; font-size: 8px !important; padding: 3px 4px !important; background: #dde3ee !important; border-top: 2px solid #b0bcc8 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    tfoot td:first-child { padding-left: 12px !important; }
-
-    /* Células */
-    th, td       { white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; padding: 2.5px 4px !important; }
-    td:first-child { padding-left: 12px !important; }
-
-    tbody td     { font-size: 8px !important; background: #fff !important; }
-    .group-line td { background: #e8edf4 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .subtotal td   { background: #f8fafc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-
-    tbody tr { page-break-inside: avoid !important; break-inside: avoid !important; }
-    .sep     { border-left: 1.5px solid #dbe2ea !important; }
-  }
-  
-</style>
-</head>
-<body>
-<div class="app">
-
-  <div class="header">
-    <div class="brand">
-      <div class="brand-logo">
-    <div class="brand-logo">
-    <img src="imagens/coco.jpg" alt="Logo Coco do Vale">
-</div>
-  </div>
-      <div>
-        <h1>Companhia Alimentícia do Vale</h1>
-        <h2>Ganho por SKU · Mercado Interno</h2>
-      </div>
-    </div>
-    <div class="kpis">
-      <div class="kpi"><small>Ganho por Preço</small><h3 id="kpi-preco">-</h3></div>
-      <div class="kpi"><small>Ganho por Volume</small><h3 id="kpi-volume">-</h3></div>
-    </div>
-  </div>
-
-  <div class="filters">
-    <label for="sel-vendedor">Vendedor</label>
-    <select id="sel-vendedor"><option value="">Todos</option></select>
-    <label for="sel-gerente">Gerente</label>
-    <select id="sel-gerente"><option value="">Todos</option></select>
-    <label for="sel-uf">UF</label>
-    <select id="sel-uf"><option value="">Todas</option></select>
-    <label for="sel-linha">Linha</label>
-    <select id="sel-linha"><option value="">Todas</option></select>
-    <label for="sel-sku">SKU</label>
-    <select id="sel-sku"><option value="">Todos</option></select>
-    <label for="sel-mesano">Mês</label>
-    <select id="sel-mesano"><option value="">Todos</option></select>
-    <button id="btnPesquisar">Pesquisar</button>
-    <button id="btnLimpar" style="background:#64748b;">Limpar</button>
-    <button id="btnImprimir" style="background:#0f172a;">Imprimir</button>
-
-    <div class="toggle">
-      <button class="active" id="btnLinha">Por Linha</button>
-      <button id="btnSku">Por SKU</button>
-    </div>
-  </div>
-
-  <div class="table-wrap">
-    <div class="table-box">
-      <table>
-        <colgroup>
-          <col class="col-produto" />
-          <col class="col-small" /><col class="col-small" />
-          <col class="col-small" /><col class="col-small" />
-          <col class="col-small" /><col class="col-small" />
-          <col class="col-small" /><col class="col-small" />
-        </colgroup>
-        <thead>
-          <tr>
-            <th></th>
-            <th colspan="2">PLANO</th>
-            <th colspan="2">REALIZADO</th>
-            <th colspan="2">VARIAÇÃO</th>
-            <th colspan="2">GANHO / PERDA</th>
-          </tr>
-          <tr>
-            <th id="th-produto">PRODUTO / LINHA</th>
-            <th class="sep">QTD</th><th>PREÇO</th>
-            <th class="sep">QTD</th><th>PREÇO</th>
-            <th class="sep">Δ QTD</th><th>Δ PREÇO</th>
-            <th class="sep">R$ QTD</th><th>R$ PREÇO</th>
-          </tr>
-        </thead>
-        <tbody id="tbody">
-          <tr><td colspan="9" class="loading">Carregando...</td></tr>
-        </tbody>
-        <tfoot id="tfoot"></tfoot>
-      </table>
-    </div>
-  </div>
-
-  <div class="status" id="status">Aguardando dados...</div>
-</div>
-
-<script>
-  const API = "http://localhost:5000";
-  let nivelAtual = "linha";
-
-  const selVendedor  = document.getElementById("sel-vendedor");
-  const selGerente   = document.getElementById("sel-gerente");
-  const selUf        = document.getElementById("sel-uf");
-  const selLinha     = document.getElementById("sel-linha");
-  const selSku       = document.getElementById("sel-sku");
-  const selMesano    = document.getElementById("sel-mesano");
-  const tbody        = document.getElementById("tbody");
-  const tfoot        = document.getElementById("tfoot");
-  const statusEl     = document.getElementById("status");
-  const btnPesquisar = document.getElementById("btnPesquisar");
-  const btnLimpar    = document.getElementById("btnLimpar");
-  const btnLinha     = document.getElementById("btnLinha");
-  const btnSku       = document.getElementById("btnSku");
-  const kpiPreco     = document.getElementById("kpi-preco");
-  const kpiVolume    = document.getElementById("kpi-volume");
-  const thProduto    = document.getElementById("th-produto");
-
-  const fmtN = n => (n == null || isNaN(n)) ? "-"
-    : new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 }).format(n);
-  const fmtP = n => (n == null || isNaN(n)) ? "-"
-    : new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
-  const fmtR = n => {
-    if (n == null || isNaN(n)) return "-";
-    return (n < 0 ? "(" : "") +
-      new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 }).format(Math.abs(n)) +
-      (n < 0 ? ")" : "");
-  };
-  const cls  = n => (n == null || isNaN(n)) ? "" : n < 0 ? "neg" : n > 0 ? "pos" : "";
-  const tdEl = (v, c = "") => `<td class="${c}">${v}</td>`;
-
-  btnLinha.onclick = () => {
-    nivelAtual = "linha"; btnLinha.classList.add("active"); btnSku.classList.remove("active");
-    carregarDados();
-  };
-  btnSku.onclick = () => {
-    nivelAtual = "sku"; btnSku.classList.add("active"); btnLinha.classList.remove("active");
-    carregarDados();
-  };
-
-  btnLimpar.onclick = () => {
-    selVendedor.value = "";
-    selGerente.value  = "";
-    selUf.value       = "";
-    selLinha.value    = "";
-    selSku.value      = "";
-    selMesano.value   = "";
-    nivelAtual = "linha";
-    btnLinha.classList.add("active");
-    btnSku.classList.remove("active");
-    carregarDados();
-  };
-
-  document.getElementById("btnImprimir").onclick = () => window.print();
-
-  async function carregarFiltros() {
-    try {
-      const r = await fetch(`${API}/filtros`);
-      const d = await r.json();
-      const opt = arr => '<option value="">Todos</option>' +
-        arr.map(v => `<option value="${v}">${v}</option>`).join("");
-      selVendedor.innerHTML = opt(d.vendedores);
-      selGerente.innerHTML  = opt(d.gerentes);
-      selUf.innerHTML = '<option value="">Todas</option>' +
-        d.ufs.map(v => `<option value="${v}">${v}</option>`).join("");
-      selLinha.innerHTML = '<option value="">Todas</option>' +
-        (d.linhas || []).map(v => `<option value="${v}">${v}</option>`).join("");
-      selSku.innerHTML = '<option value="">Todos</option>' +
-        (d.skus || []).map(v => `<option value="${v}">${v}</option>`).join("");
-      const meses = d.meses || d.mesanos || [];
-      selMesano.innerHTML = '<option value="">Todos</option>' +
-        meses.map(m => `<option value="${m.value}">${m.label}</option>`).join("");
-    } catch {
-      statusEl.textContent = "⚠️ Backend offline — verifique se o servidor está rodando em localhost:5000";
-    }
-  }
-
-  async function carregarDados() {
-    tbody.innerHTML = `<tr><td colspan="9" class="loading">Carregando...</td></tr>`;
-    tfoot.innerHTML = "";
-    const params = new URLSearchParams({ nivel: nivelAtual });
-    if (selVendedor.value) params.set("vendedor", selVendedor.value);
-    if (selGerente.value)  params.set("gerente",  selGerente.value);
-    if (selUf.value)       params.set("uf",       selUf.value);
-    if (selLinha.value)    params.set("linha",    selLinha.value);
-    if (selSku.value)      params.set("sku",      selSku.value);
-    if (selMesano.value)   params.set("mesano",   selMesano.value);
-    try {
-      btnPesquisar.disabled = true;
-      btnPesquisar.textContent = "Carregando...";
-      const r = await fetch(`${API}/dados?${params}`);
-      const d = await r.json();
-
-      kpiPreco.textContent  = fmtR(d.total_ganho_preco);
-      kpiPreco.className    = cls(d.total_ganho_preco);
-      kpiVolume.textContent = fmtR(d.total_ganho_qtd);
-      kpiVolume.className   = cls(d.total_ganho_qtd);
-      thProduto.textContent = nivelAtual === "sku" ? "PRODUTO / SKU" : "LINHA / SKU";
-
-      if (!d.rows || d.rows.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" class="loading">Nenhum dado encontrado</td></tr>`;
-        return;
-      }
-
-      const INVALIDOS = new Set(["", "0", "nan", "none", "null", "-", "0.0"]);
-      const strLimpo  = v => String(v == null ? "" : v).trim().toLowerCase();
-      const ehInvalido = v => INVALIDOS.has(strLimpo(v));
-
-      const rowValido = (row) => {
-        if (row.type === "linha") {
-          return !ehInvalido(row.linha);
+      @media print {
+        @page {
+          size: A4 landscape;
+          margin: 8mm 10mm;
         }
-        const s = strLimpo(row.sku);
-        const p = strLimpo(row.produto);
-        if (ehInvalido(s) || ehInvalido(p)) return false;
-        const nome = s + " - " + p;
-        if (["0 - 0", "nan - nan", "0 - nan", "0.0 - 0.0", " - "].includes(nome)) return false;
-        return true;
+
+        html,
+        body {
+          overflow: visible !important;
+          height: auto !important;
+          background: #fff !important;
+          font-size: 9px !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        .app {
+          height: auto !important;
+          display: block !important;
+        }
+        .filters,
+        .status {
+          display: none !important;
+        }
+
+        /* Header da aplicação: compacto, sem box-shadow */
+        .header {
+          padding: 5px 8px !important;
+          box-shadow: none !important;
+          border-bottom: 1px solid #ccc !important;
+          margin-bottom: 3px !important;
+        }
+        .brand-logo {
+          width: 26px !important;
+          height: 26px !important;
+          font-size: 12px !important;
+        }
+        .brand h1 {
+          font-size: 10px !important;
+        }
+        .brand h2 {
+          font-size: 8px !important;
+        }
+        .kpi {
+          padding: 3px 8px !important;
+          min-width: 100px !important;
+        }
+        .kpi small {
+          font-size: 6.5px !important;
+        }
+        .kpi h3 {
+          font-size: 12px !important;
+          margin-top: 2px !important;
+        }
+
+        /* Tabela sem scroll */
+        .table-wrap {
+          flex: none !important;
+          overflow: visible !important;
+          padding: 0 !important;
+          background: #fff !important;
+        }
+        .table-box {
+          border: none !important;
+          border-radius: 0 !important;
+        }
+
+        /* Colunas */
+        .col-produto {
+          width: 30% !important;
+        }
+        .col-small {
+          width: 8.75% !important;
+        }
+
+        table {
+          width: 100% !important;
+          table-layout: fixed !important;
+          font-size: 8px !important;
+          border-collapse: collapse !important;
+        }
+
+        /* thead repete em todas as páginas — resetar sticky */
+        thead {
+          display: table-header-group !important;
+        }
+        thead th {
+          position: static !important;
+          top: auto !important;
+          box-shadow: none !important;
+          font-size: 7.5px !important;
+          padding: 3px 4px !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        thead th::before {
+          display: none !important;
+        }
+
+        thead tr:first-child th {
+          background: #6b7280 !important;
+          color: #fff !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        thead tr:nth-child(2) th {
+          background: #9ca3af !important;
+          color: #fff !important;
+          box-shadow: none !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+
+        /* tfoot estático */
+        tfoot {
+          display: table-footer-group !important;
+        }
+        tfoot td {
+          position: static !important;
+          box-shadow: none !important;
+          font-size: 8px !important;
+          padding: 3px 4px !important;
+          background: #dde3ee !important;
+          border-top: 2px solid #b0bcc8 !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        tfoot td:first-child {
+          padding-left: 12px !important;
+        }
+
+        /* Células */
+        th,
+        td {
+          white-space: nowrap !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
+          padding: 2.5px 4px !important;
+        }
+        td:first-child {
+          padding-left: 12px !important;
+        }
+
+        tbody td {
+          font-size: 8px !important;
+          background: #fff !important;
+        }
+        .group-line td {
+          background: #e8edf4 !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        .subtotal td {
+          background: #f8fafc !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+
+        tbody tr {
+          page-break-inside: avoid !important;
+          break-inside: avoid !important;
+        }
+        .sep {
+          border-left: 1.5px solid #dbe2ea !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <div class="header">
+        <div class="brand">
+          <div class="brand-logo">
+            <div class="brand-logo">
+              <img src="imagens/coco.jpg" alt="Logo Coco do Vale" />
+            </div>
+          </div>
+          <div>
+            <h1>Companhia Alimentícia do Vale</h1>
+            <h2>Ganho por SKU · Mercado Interno</h2>
+          </div>
+        </div>
+        <div class="kpis">
+          <div class="kpi">
+            <small>Ganho por Preço</small>
+            <h3 id="kpi-preco">-</h3>
+          </div>
+          <div class="kpi">
+            <small>Ganho por Volume</small>
+            <h3 id="kpi-volume">-</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="filters">
+        <label for="sel-vendedor">Vendedor</label>
+        <select id="sel-vendedor">
+          <option value="">Todos</option>
+        </select>
+        <label for="sel-gerente">Gerente</label>
+        <select id="sel-gerente">
+          <option value="">Todos</option>
+        </select>
+        <label for="sel-uf">UF</label>
+        <select id="sel-uf">
+          <option value="">Todas</option>
+        </select>
+        <label for="sel-linha">Linha</label>
+        <select id="sel-linha">
+          <option value="">Todas</option>
+        </select>
+        <label for="sel-sku">SKU</label>
+        <select id="sel-sku">
+          <option value="">Todos</option>
+        </select>
+        <label for="sel-mesano">Mês</label>
+        <select id="sel-mesano">
+          <option value="">Todos</option>
+        </select>
+        <button id="btnPesquisar">Pesquisar</button>
+        <button id="btnLimpar" style="background: #64748b">Limpar</button>
+        <button id="btnImprimir" style="background: #0f172a">Imprimir</button>
+
+        <div class="toggle">
+          <button class="active" id="btnLinha">Por Linha</button>
+          <button id="btnSku">Por SKU</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-box">
+          <table>
+            <colgroup>
+              <col class="col-produto" />
+              <col class="col-small" />
+              <col class="col-small" />
+              <col class="col-small" />
+              <col class="col-small" />
+              <col class="col-small" />
+              <col class="col-small" />
+              <col class="col-small" />
+              <col class="col-small" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th></th>
+                <th colspan="2">PLANO</th>
+                <th colspan="2">REALIZADO</th>
+                <th colspan="2">VARIAÇÃO</th>
+                <th colspan="2">GANHO / PERDA</th>
+              </tr>
+              <tr>
+                <th id="th-produto">PRODUTO / LINHA</th>
+                <th class="sep">QTD</th>
+                <th>PREÇO</th>
+                <th class="sep">QTD</th>
+                <th>PREÇO</th>
+                <th class="sep">Δ QTD</th>
+                <th>Δ PREÇO</th>
+                <th class="sep">R$ QTD</th>
+                <th>R$ PREÇO</th>
+              </tr>
+            </thead>
+            <tbody id="tbody">
+              <tr>
+                <td colspan="9" class="loading">Carregando...</td>
+              </tr>
+            </tbody>
+            <tfoot id="tfoot"></tfoot>
+          </table>
+        </div>
+      </div>
+
+      <div class="status" id="status">Aguardando dados...</div>
+    </div>
+
+    <script>
+      const API = "http://localhost:5000";
+      let nivelAtual = "linha";
+
+      const selVendedor = document.getElementById("sel-vendedor");
+      const selGerente = document.getElementById("sel-gerente");
+      const selUf = document.getElementById("sel-uf");
+      const selLinha = document.getElementById("sel-linha");
+      const selSku = document.getElementById("sel-sku");
+      const selMesano = document.getElementById("sel-mesano");
+      const tbody = document.getElementById("tbody");
+      const tfoot = document.getElementById("tfoot");
+      const statusEl = document.getElementById("status");
+      const btnPesquisar = document.getElementById("btnPesquisar");
+      const btnLimpar = document.getElementById("btnLimpar");
+      const btnLinha = document.getElementById("btnLinha");
+      const btnSku = document.getElementById("btnSku");
+      const kpiPreco = document.getElementById("kpi-preco");
+      const kpiVolume = document.getElementById("kpi-volume");
+      const thProduto = document.getElementById("th-produto");
+
+      const fmtN = (n) =>
+        n == null || isNaN(n)
+          ? "-"
+          : new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 }).format(
+              n
+            );
+      const fmtP = (n) =>
+        n == null || isNaN(n)
+          ? "-"
+          : new Intl.NumberFormat("pt-BR", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            }).format(n);
+      const fmtR = (n) => {
+        if (n == null || isNaN(n)) return "-";
+        return (
+          (n < 0 ? "(" : "") +
+          new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 }).format(
+            Math.abs(n)
+          ) +
+          (n < 0 ? ")" : "")
+        );
+      };
+      const cls = (n) =>
+        n == null || isNaN(n) ? "" : n < 0 ? "neg" : n > 0 ? "pos" : "";
+      const tdEl = (v, c = "") => `<td class="${c}">${v}</td>`;
+
+      btnLinha.onclick = () => {
+        nivelAtual = "linha";
+        btnLinha.classList.add("active");
+        btnSku.classList.remove("active");
+        carregarDados();
+      };
+      btnSku.onclick = () => {
+        nivelAtual = "sku";
+        btnSku.classList.add("active");
+        btnLinha.classList.remove("active");
+        carregarDados();
       };
 
-      let html = "";
-      d.rows.forEach(row => {
-        if (!rowValido(row)) return;
-        const isLinha  = row.type === "linha";
-        const label    = isLinha ? row.linha : `${row.sku} - ${row.produto}`;
-        const rowClass = isLinha ? "subtotal group-line" : "sku-row";
-        html += `
+      btnLimpar.onclick = () => {
+        selVendedor.value = "";
+        selGerente.value = "";
+        selUf.value = "";
+        selLinha.value = "";
+        selSku.value = "";
+        selMesano.value = "";
+        nivelAtual = "linha";
+        btnLinha.classList.add("active");
+        btnSku.classList.remove("active");
+        carregarDados();
+      };
+
+      document.getElementById("btnImprimir").onclick = () => window.print();
+
+      async function carregarFiltros() {
+        try {
+          const r = await fetch(`${API}/filtros`);
+          const d = await r.json();
+          const opt = (arr) =>
+            '<option value="">Todos</option>' +
+            arr.map((v) => `<option value="${v}">${v}</option>`).join("");
+          selVendedor.innerHTML = opt(d.vendedores);
+          selGerente.innerHTML = opt(d.gerentes);
+          selUf.innerHTML =
+            '<option value="">Todas</option>' +
+            d.ufs.map((v) => `<option value="${v}">${v}</option>`).join("");
+          selLinha.innerHTML =
+            '<option value="">Todas</option>' +
+            (d.linhas || [])
+              .map((v) => `<option value="${v}">${v}</option>`)
+              .join("");
+          selSku.innerHTML =
+            '<option value="">Todos</option>' +
+            (d.skus || [])
+              .map((v) => `<option value="${v}">${v}</option>`)
+              .join("");
+          const meses = d.meses || d.mesanos || [];
+          selMesano.innerHTML =
+            '<option value="">Todos</option>' +
+            meses
+              .map((m) => `<option value="${m.value}">${m.label}</option>`)
+              .join("");
+        } catch {
+          statusEl.textContent =
+            "⚠️ Backend offline — verifique se o servidor está rodando em localhost:5000";
+        }
+      }
+
+      async function carregarDados() {
+        tbody.innerHTML = `<tr><td colspan="9" class="loading">Carregando...</td></tr>`;
+        tfoot.innerHTML = "";
+        const params = new URLSearchParams({ nivel: nivelAtual });
+        if (selVendedor.value) params.set("vendedor", selVendedor.value);
+        if (selGerente.value) params.set("gerente", selGerente.value);
+        if (selUf.value) params.set("uf", selUf.value);
+        if (selLinha.value) params.set("linha", selLinha.value);
+        if (selSku.value) params.set("sku", selSku.value);
+        if (selMesano.value) params.set("mesano", selMesano.value);
+        try {
+          btnPesquisar.disabled = true;
+          btnPesquisar.textContent = "Carregando...";
+          const r = await fetch(`${API}/dados?${params}`);
+          const d = await r.json();
+
+          kpiPreco.textContent = fmtR(d.total_ganho_preco);
+          kpiPreco.className = cls(d.total_ganho_preco);
+          kpiVolume.textContent = fmtR(d.total_ganho_qtd);
+          kpiVolume.className = cls(d.total_ganho_qtd);
+          thProduto.textContent =
+            nivelAtual === "sku" ? "PRODUTO / SKU" : "LINHA / SKU";
+
+          if (!d.rows || d.rows.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="9" class="loading">Nenhum dado encontrado</td></tr>`;
+            return;
+          }
+
+          const INVALIDOS = new Set([
+            "",
+            "0",
+            "nan",
+            "none",
+            "null",
+            "-",
+            "0.0",
+          ]);
+          const strLimpo = (v) =>
+            String(v == null ? "" : v)
+              .trim()
+              .toLowerCase();
+          const ehInvalido = (v) => INVALIDOS.has(strLimpo(v));
+
+          const rowValido = (row) => {
+            if (row.type === "linha") {
+              return !ehInvalido(row.linha);
+            }
+            const s = strLimpo(row.sku);
+            const p = strLimpo(row.produto);
+            if (ehInvalido(s) || ehInvalido(p)) return false;
+            const nome = s + " - " + p;
+            if (
+              ["0 - 0", "nan - nan", "0 - nan", "0.0 - 0.0", " - "].includes(
+                nome
+              )
+            )
+              return false;
+            return true;
+          };
+
+          let html = "";
+          d.rows.forEach((row) => {
+            if (!rowValido(row)) return;
+            const isLinha = row.type === "linha";
+            const label = isLinha ? row.linha : `${row.sku} - ${row.produto}`;
+            const rowClass = isLinha ? "subtotal group-line" : "sku-row";
+            html += `
 <tr class="${rowClass}">
   <td>${label}</td>
-  ${tdEl(fmtN(row.plano_qtd),   "sep")}  ${tdEl(fmtP(row.plano_preco))}
-  ${tdEl(fmtN(row.real_qtd),    "sep")}  ${tdEl(fmtP(row.real_preco))}
-  ${tdEl(fmtR(row.var_qtd),     "sep " + cls(row.var_qtd))}  ${tdEl(fmtP(row.var_preco), cls(row.var_preco))}
-  ${tdEl(fmtR(row.ganho_qtd),   "sep " + cls(row.ganho_qtd))}  ${tdEl(fmtR(row.ganho_preco), cls(row.ganho_preco))}
+  ${tdEl(fmtN(row.plano_qtd), "sep")}  ${tdEl(fmtP(row.plano_preco))}
+  ${tdEl(fmtN(row.real_qtd), "sep")}  ${tdEl(fmtP(row.real_preco))}
+  ${tdEl(fmtR(row.var_qtd), "sep " + cls(row.var_qtd))}  ${tdEl(
+              fmtP(row.var_preco),
+              cls(row.var_preco)
+            )}
+  ${tdEl(fmtR(row.ganho_qtd), "sep " + cls(row.ganho_qtd))}  ${tdEl(
+              fmtR(row.ganho_preco),
+              cls(row.ganho_preco)
+            )}
 </tr>`;
-      });
-      tbody.innerHTML = html;
+          });
+          tbody.innerHTML = html;
 
-      // Linha de total → tfoot fixo no rodapé
-      const totalPlan = d.rows.reduce((a, b) => a + (b.plano_qtd || 0), 0);
-      const totalReal = d.rows.reduce((a, b) => a + (b.real_qtd  || 0), 0);
-      tfoot.innerHTML = `
+          // Linha de total → tfoot fixo no rodapé
+          const totalPlan = d.rows.reduce((a, b) => a + (b.plano_qtd || 0), 0);
+          const totalReal = d.rows.reduce((a, b) => a + (b.real_qtd || 0), 0);
+          tfoot.innerHTML = `
 <tr>
   <td>TOTAL</td>
   ${tdEl(fmtN(totalPlan), "sep")} ${tdEl("-")}
   ${tdEl(fmtN(totalReal), "sep")} ${tdEl("-")}
-  ${tdEl(fmtR(totalReal - totalPlan), "sep " + cls(totalReal - totalPlan))} ${tdEl("-")}
-  ${tdEl(fmtR(d.total_ganho_qtd),   "sep " + cls(d.total_ganho_qtd))}
+  ${tdEl(
+    fmtR(totalReal - totalPlan),
+    "sep " + cls(totalReal - totalPlan)
+  )} ${tdEl("-")}
+  ${tdEl(fmtR(d.total_ganho_qtd), "sep " + cls(d.total_ganho_qtd))}
   ${tdEl(fmtR(d.total_ganho_preco), cls(d.total_ganho_preco))}
 </tr>`;
 
-      statusEl.textContent = `${d.rows.length} registros carregados`;
-    } catch (e) {
-      console.error(e);
-      tbody.innerHTML = `<tr><td colspan="9" class="loading">Erro ao carregar backend — verifique o console.</td></tr>`;
-    } finally {
-      btnPesquisar.disabled = false;
-      btnPesquisar.textContent = "Pesquisar";
-    }
-  }
+          statusEl.textContent = `${d.rows.length} registros carregados`;
+        } catch (e) {
+          console.error(e);
+          tbody.innerHTML = `<tr><td colspan="9" class="loading">Erro ao carregar backend — verifique o console.</td></tr>`;
+        } finally {
+          btnPesquisar.disabled = false;
+          btnPesquisar.textContent = "Pesquisar";
+        }
+      }
 
-  btnPesquisar.onclick = carregarDados;
+      btnPesquisar.onclick = carregarDados;
 
-  function ajustarTheadRow2() {
-    const row1 = document.querySelector('thead tr:first-child');
-    const row2ths = document.querySelectorAll('thead tr:nth-child(2) th');
-    if (row1 && row2ths.length) {
-      const h = row1.getBoundingClientRect().height;
-      row2ths.forEach(th => th.style.top = h + 'px');
-    }
-  }
+      function ajustarTheadRow2() {
+        const row1 = document.querySelector("thead tr:first-child");
+        const row2ths = document.querySelectorAll("thead tr:nth-child(2) th");
+        if (row1 && row2ths.length) {
+          const h = row1.getBoundingClientRect().height;
+          row2ths.forEach((th) => (th.style.top = h + "px"));
+        }
+      }
 
-  window.addEventListener('resize', ajustarTheadRow2);
+      window.addEventListener("resize", ajustarTheadRow2);
 
-  window.onload = async () => {
-    await carregarFiltros();
-    await carregarDados();
-    ajustarTheadRow2();
-  };
-</script>
-</body>
+      window.onload = async () => {
+        await carregarFiltros();
+        await carregarDados();
+        ajustarTheadRow2();
+      };
+    </script>
+  </body>
 </html>
