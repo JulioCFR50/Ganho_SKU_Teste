@@ -689,13 +689,20 @@
           : new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 }).format(
               n
             );
-      const fmtP = (n) =>
-        n == null || isNaN(n)
-          ? "-"
-          : new Intl.NumberFormat("pt-BR", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            }).format(n);
+      const fmtP = (n) => {
+        n = Number(n);
+
+        if (isNaN(n)) return "-";
+
+        return (
+          (n < 0 ? "(" : "") +
+          new Intl.NumberFormat("pt-BR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }).format(Math.abs(n)) +
+          (n < 0 ? ")" : "")
+        );
+      };
       const fmtR = (n) => {
         if (n == null || isNaN(n)) return "-";
         return (
